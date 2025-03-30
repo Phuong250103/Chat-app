@@ -6,9 +6,10 @@ import SettingsPage from "./pages/SettingsPage";
 import ProfilePage from "./pages/ProfilePage";
 
 import { Routes, Route, Navigate } from "react-router-dom";
-import { useAuthStore } from "./store/userAuthStore";
+import { useAuthStore } from "./store/useAuthStore";
 import { useEffect } from "react";
 import {Loader} from "lucide-react";
+import {Toaster} from "react-hot-toast";
 
 const App = () => {
   const {authUser, checkAuth, isCheckingAuth} = useAuthStore(); // lấy thông tin người dùng đã xác thực từ store
@@ -39,6 +40,8 @@ const App = () => {
         <Route path="/profile" element={authUser ? <ProfilePage/>  : <Navigate to="/login" />} />
 
       </Routes>
+
+      <Toaster/>
 
     </div>
   );
