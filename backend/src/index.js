@@ -12,7 +12,8 @@ const app = express();
 
 const PORT = process.env.PORT;
 
-app.use(express.json());
+app.use(express.json({ limit: "5mb" })); // tang kich thuoc cho phep gui du lieu lon hon 
+app.use(express.urlencoded({ limit: "5mb", extended: true }));
 app.use(cookieParser()); // middleware de lay cookie tu client gui len
 app.use(cors(
     {
@@ -23,7 +24,6 @@ app.use(cors(
 
 app.use("/api/auth", authRoutes);
 app.use("/api/message", messageRoutes);
-
 
 app.listen(PORT,() => {
     console.log('Server is running on PORT:' + PORT);
