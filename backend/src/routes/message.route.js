@@ -4,7 +4,7 @@ import { getUserForSidebar, getMessages, sendMessage } from '../controllers/mess
 
 const router = expess.Router();
 
-router.get("/user", protectRoute, getUserForSidebar); // lay danh sach user de hien thi tren sidebar
+router.get("/users", protectRoute, getUserForSidebar); // lay danh sach user de hien thi tren sidebar
 router.get("/:id", protectRoute, getMessages);  // lay danh sach tin nhan giua 2 user
 router.post("/send/:id", protectRoute, sendMessage); // gui tin nhan
 
