@@ -14,7 +14,9 @@ const messageSchema = new mongoose.Schema(
         },
         text:{ 
             type: String,
-            required: true,
+            required: function () {
+                return !this.image; // chỉ bắt buộc nếu không có image
+            },
         },
         image: {
             type: String,
