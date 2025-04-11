@@ -13,8 +13,10 @@ import {Toaster} from "react-hot-toast";
 import { useThemeStore } from "./store/useThemeStore";
 
 const App = () => {
-  const {authUser, checkAuth, isCheckingAuth} = useAuthStore(); // lấy thông tin người dùng đã xác thực từ store
+  const {authUser, checkAuth, isCheckingAuth, onlineUsers } = useAuthStore(); // lấy thông tin người dùng đã xác thực từ store
   const { theme } = useThemeStore(); // lấy theme từ store
+
+  console.log(onlineUsers);
 
 
   useEffect(()=>{
