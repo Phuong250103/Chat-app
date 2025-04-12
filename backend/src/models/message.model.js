@@ -14,12 +14,20 @@ const messageSchema = new mongoose.Schema(
         },
         text:{ 
             type: String,
-            required: function () {
-                return !this.image; // chỉ bắt buộc nếu không có image
+            required: function () {         
+                return !(this.image || this.file); // chỉ bắt buộc nếu không có image
             },
         },
         image: {
             type: String,
+        },
+        file: {
+            name: {
+                type: String,
+            },
+            content: {
+                type: String,
+            },
         },
     },
     { timestamps: true } // thoi gian tao va cap nhat

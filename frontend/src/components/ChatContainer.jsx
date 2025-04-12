@@ -1,5 +1,5 @@
 import { useChatStore } from "../store/useChatStore";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import ChatHeader from "./ChatHeader";
 import MessageInput from "./MessageInput";
@@ -8,6 +8,7 @@ import { useAuthStore } from "../store/useAuthStore";
 import { formatMessageTime } from "../lib/utils";
 
 const ChatContainer = () => {
+  const [expandedFiles, setExpandedFiles] = useState([]);
   const {
     messages,
     getMessages,
@@ -80,6 +81,28 @@ const ChatContainer = () => {
                 />
               )}
               {message.text && <p>{message.text}</p>}
+              {message.file && (
+                  <div className="mt-2 p-2 bg-base-200 rounded-md border border-zinc-600">
+                    <button
+                      className="font-semibold text-sm mb-1 flex items-center gap-1 hover:underline"
+                      onClick={() =>
+                        setExpandedFiles((prev) =>
+                          prev.includes(message._id)
+                            ? prev.filter((id) => id !== message._id)
+                            : [...prev, message._id]
+                        )
+                      }
+                    >
+                      📄 {message.file.name}
+                    </button>
+
+                    {expandedFiles.includes(message._id) && (
+                      <pre className="mt-2 text-sm whitespace-pre-wrap bg-zinc-900 p-3 rounded">
+                        {message.file.content}
+                      </pre>
+                    )}
+                  </div>
+                )}
             </div>
           </div>
         ))}
