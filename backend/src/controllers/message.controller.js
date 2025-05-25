@@ -71,3 +71,29 @@ export const sendMessage = async (req, res) => {
         return res.status(500).json({ message: "Loi server" });
     }
 };
+
+export const deleteMessage = async (req, res) => {
+    try {
+        const { id } = req.params; // ID của tin nhắn
+        const userId = req.user._id;
+
+        const message = await Message.findById(id);
+        if (!message) return res.status(404).json({ message: "Khong tim thay tin nhan" });
+
+        if (message.senderId.toString() !== userId.toString()) { //Chỉ cho phép người gửi tin nhắn xoá tin nhắn của chính mình
+            return res.status(403).json({ message: "Ban khong co quyen xoa tin nhan nay" });
+        }
+
+        await Message.findByIdAndDelete(id);
+
+        const receiverSocketId = getReceiverSocketId(message.receiverId);
+        if (receiverSocketId) { 
+            io.to(receiverSocketId).emit("messageDeleted", id);
+        }
+
+        res.status(200).json({ message: "Xoa tin nhan thanh cong", id });
+    } catch (error) {
+        console.log("Loi khi xoa tin nhan:", error.message);
+        res.status(500).json({ message: "Lỗi server" });
+    }
+};

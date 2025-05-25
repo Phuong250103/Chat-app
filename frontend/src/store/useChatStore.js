@@ -43,12 +43,23 @@ export const useChatStore = create((set, get) => ({
     }
   },
 
+  deleteMessage: async (id) => {
+    try {
+      await axiosInstance.delete(`/messages/delete/${id}`);    
+      set({
+        messages: get().messages.filter((msg) => msg._id !== id), // Xoá tin nhắn khỏi danh sách tin nhắn
+      });
+    } catch (error) {
+      toast.error("Xoá tin nhắn thất bại");
+    }
+  },
+
   subscribeToMessages: () => {
     const { selectedUser } = get();
     if (!selectedUser) return;
 
     const socket = useAuthStore.getState().socket;
-
+    
     socket.on("newMessage", (newMessage) => {
       const isMessageSentFromSelectedUser = newMessage.senderId === selectedUser._id;
       if (!isMessageSentFromSelectedUser) return;
@@ -57,12 +68,19 @@ export const useChatStore = create((set, get) => ({
         messages: [...get().messages, newMessage],
       });
     });
+    socket.on("deleteMessage", (deletedMessageId) => {
+      set({
+       messages: get().messages.filter((msg) => msg._id !== deletedMessageId),
+      });
+     });
+
   },
 
   unsubscribeFromMessages: () => {
     const socket = useAuthStore.getState().socket;
     socket.off("newMessage");
   },
+  
 
   setSelectedUser: (selectedUser) => set({ selectedUser }),
 }));

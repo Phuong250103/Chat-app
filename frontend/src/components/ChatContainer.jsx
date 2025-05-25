@@ -9,6 +9,7 @@ import { formatMessageTime } from "../lib/utils";
 
 const ChatContainer = () => {
   const [expandedFiles, setExpandedFiles] = useState([]);
+  const [selectedMessageId, setSelectedMessageId] = useState(null);
   const {
     messages,
     getMessages,
@@ -16,6 +17,7 @@ const ChatContainer = () => {
     selectedUser,
     subscribeToMessages,
     unsubscribeFromMessages,
+    deleteMessage
   } = useChatStore();
   const { authUser } = useAuthStore();
   const messageEndRef = useRef(null);
@@ -42,8 +44,7 @@ const ChatContainer = () => {
         <MessageInput />
       </div>
     );
-  }
-
+  } 
   return (
     <div className="flex-1 flex flex-col overflow-auto">
       <ChatHeader />
@@ -67,32 +68,33 @@ const ChatContainer = () => {
                 />
               </div>
             </div>
+
             <div className="chat-header mb-1">
               <time className="text-xs opacity-50 ml-1">
                 {formatMessageTime(message.createdAt)}
               </time>
             </div>
-            <div className="chat-bubble flex flex-col">
+            <div className="chat-bubble flex flex-col relative">
               {message.image && (
                 <img
-                  src={message.image}
-                  alt="Attachment"
-                  className="sm:max-w-[200px] rounded-md mb-2"
+                src={message.image}
+                alt="Attachment"
+                className="sm:max-w-[200px] rounded-md mb-2"
                 />
               )}
               {message.text && <p>{message.text}</p>}
               {message.file && (
-                  <div className="mt-2 p-2 bg-base-200 rounded-md border border-zinc-600">
+                <div className="mt-2 p-2 bg-base-200 rounded-md border border-zinc-600">
                     <button
                       className="font-semibold text-sm mb-1 flex items-center gap-1 hover:underline"
                       onClick={() =>
                         setExpandedFiles((prev) =>
                           prev.includes(message._id)
-                            ? prev.filter((id) => id !== message._id)
-                            : [...prev, message._id]
-                        )
-                      }
-                    >
+                      ? prev.filter((id) => id !== message._id)
+                      : [...prev, message._id]
+                    )
+                  }
+                  >
                       📄 {message.file.name}
                     </button>
 
@@ -103,7 +105,33 @@ const ChatContainer = () => {
                     )}
                   </div>
                 )}
-            </div>
+              {message.senderId === authUser._id && (
+                <div className="absolute -left-6 top-[65%] transform -translate-y-1/2">
+                  <button
+                    onClick={() =>
+                      setSelectedMessageId((prev) => (prev === message._id ? null : message._id))
+                    }
+                    className="text-xs text-gray-400 hover:text-white ml-2 mt-1"
+                  >
+                    ...
+                  </button>
+
+                  {selectedMessageId === message._id && (
+                    <div className="absolute right-0 mt-1 bg-white dark:bg-gray-800 border rounded shadow p-1 z-10">
+                      <button
+                        onClick={() => {
+                          deleteMessage(message._id);
+                          setSelectedMessageId(null);
+                        }}
+                        className="text-sm text-red-500 hover:underline px-2 py-1"
+                      >
+                        Xoá
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>           
           </div>
         ))}
       </div>
